@@ -26,14 +26,14 @@ public class BookingServiceImpl implements BookingService{
 
 
     @Override
-    public BookingResponseDto createBooking(BookingRequestDto bookingRequestDto,Long userId,Long carId) {
+    public BookingResponseDto createBooking(Long userId, Long carId, BookingRequestDto bookingRequestDto) {
         Car car = carRepository.findById(carId)
                 .orElseThrow(() -> new RuntimeException("Car not found"));
 
         if (!car.isAvailable()) {
             throw new RuntimeException("Car is not available for booking");
         }
-        User customer = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFound("No Customer Found with id"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFound("No Customer Found with id"));
         long days = ChronoUnit.DAYS.between(bookingRequestDto.getStartDate(), bookingRequestDto.getEndDate());
         if (days <= 0) {
             throw new RuntimeException("End date must be after start date");
@@ -41,7 +41,7 @@ public class BookingServiceImpl implements BookingService{
 
         double totalPrice = car.getPricePerDay() * days;
 
-       Booking booking = BookingMapper.toEntity(customer,car,bookingRequestDto);
+       Booking booking = BookingMapper.toEntity(user,car,bookingRequestDto);
        car.setAvailable(false);
        carRepository.save(car);
 
@@ -56,11 +56,20 @@ public class BookingServiceImpl implements BookingService{
 
     @Override
     public BookingResponseDto getBookingById(Long id) {
-        return null;
+
+        Booking booking = bookingRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFound("Booking not found with id " + id));
+        return BookingMapper.toResponse(booking);
     }
 
     @Override
-    public List<BookingResponseDto> getBookingByCustomer(Long customerId) {
-        return List.of();
+    public List<BookingResponseDto> getBookingByUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFound("User not found with id " + userId));
+        return bookingRepository.findByUser(user)
+                .stream()
+                .map(BookingMapper::toResponse)
+                .toList();
+
     }
 }

@@ -35,6 +35,7 @@ public class BookingMapper {
                 .startDate(booking.getStartDate())
                 .endDate(booking.getEndDate())
                 .totalPrice(booking.getTotalPrice())
+                .status(booking.getStatus())
                 .build();
     }
 }

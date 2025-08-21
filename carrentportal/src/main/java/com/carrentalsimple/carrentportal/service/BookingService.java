@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface BookingService {
 
-    BookingResponseDto createBooking(BookingRequestDto bookingRequestDto, Long id,Long carId);
+    BookingResponseDto createBooking(Long userId,Long carId,BookingRequestDto bookingRequestDto);
     BookingResponseDto getBookingById(Long id);
-    List<BookingResponseDto> getBookingByCustomer(Long customerId);
+    List<BookingResponseDto> getBookingByUser(Long userId);
 }

@@ -1,6 +1,7 @@
 package com.carrentalsimple.carrentportal.dto;
 
 
+import com.carrentalsimple.carrentportal.entity.enums.BookingStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,5 +20,6 @@ public class BookingResponseDto {
     private LocalDate startDate;
     private LocalDate endDate;
     private double totalPrice;
+    private BookingStatus status;
 
 }
