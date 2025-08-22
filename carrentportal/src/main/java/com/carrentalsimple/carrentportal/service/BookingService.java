@@ -11,4 +11,11 @@ public interface BookingService {
     BookingResponseDto createBooking(Long userId,Long carId,BookingRequestDto bookingRequestDto);
     BookingResponseDto getBookingById(Long id);
     List<BookingResponseDto> getBookingByUser(Long userId);
+
+    BookingResponseDto cancelBooking(Long bookingId,Long userId);
+    BookingResponseDto confirmBooking(Long bookingId);
+    BookingResponseDto completeBooking(Long bookingId);
+
+    List<BookingResponseDto> getAllBookings();
+    List<BookingResponseDto> getBookingsByCar(Long carId);
 }

@@ -5,6 +5,7 @@ import com.carrentalsimple.carrentportal.dto.BookingResponseDto;
 import com.carrentalsimple.carrentportal.entity.Booking;
 import com.carrentalsimple.carrentportal.entity.Car;
 import com.carrentalsimple.carrentportal.entity.User;
+import com.carrentalsimple.carrentportal.entity.enums.BookingStatus;
 import com.carrentalsimple.carrentportal.exception.ResourceNotFound;
 import com.carrentalsimple.carrentportal.mapper.BookingMapper;
 import com.carrentalsimple.carrentportal.repository.BookingRepository;
@@ -13,8 +14,10 @@ import com.carrentalsimple.carrentportal.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.awt.print.Book;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -43,6 +46,7 @@ public class BookingServiceImpl implements BookingService{
 
        Booking booking = BookingMapper.toEntity(user,car,bookingRequestDto);
        car.setAvailable(false);
+       booking.setStatus(BookingStatus.COMPLETED);
        carRepository.save(car);
 
         Booking saved = bookingRepository.save(booking);
@@ -71,5 +75,44 @@ public class BookingServiceImpl implements BookingService{
                 .map(BookingMapper::toResponse)
                 .toList();
 
+    }
+
+    @Override
+    public BookingResponseDto cancelBooking(Long bookingId, Long userId) {
+        Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new ResourceNotFound("Booking not found"));
+        if (!booking.getUser().getId().equals(userId)){
+            throw new RuntimeException("You can cancel only your booking");
+        }
+
+        booking.setStatus(BookingStatus.CANCELLED);
+        return BookingMapper.toResponse(bookingRepository.save(booking));
+    }
+
+    @Override
+    public BookingResponseDto confirmBooking(Long bookingId) {
+        Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new ResourceNotFound("Booking not Found"));
+
+        booking.setStatus(BookingStatus.CONFIRMED);
+        return BookingMapper.toResponse(bookingRepository.save(booking));
+    }
+
+    @Override
+    public BookingResponseDto completeBooking(Long bookingId) {
+        Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new ResourceNotFound("Booking not found"));
+
+        booking.setStatus(BookingStatus.COMPLETED);
+        return BookingMapper.toResponse(bookingRepository.save(booking));
+    }
+
+    @Override
+    public List<BookingResponseDto> getAllBookings() {
+        return bookingRepository.findAll().stream()
+                .map(BookingMapper::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<BookingResponseDto> getBookingsByCar(Long carId) {
+        return null;
     }
 }

@@ -6,6 +6,7 @@ import com.carrentalsimple.carrentportal.dto.BookingResponseDto;
 import com.carrentalsimple.carrentportal.entity.Booking;
 import com.carrentalsimple.carrentportal.entity.Car;
 import com.carrentalsimple.carrentportal.entity.User;
+import com.carrentalsimple.carrentportal.entity.enums.BookingStatus;
 
 import java.time.temporal.ChronoUnit;
 
@@ -23,13 +24,14 @@ public class BookingMapper {
                 .startDate(dto.getStartDate())
                 .endDate(dto.getEndDate())
                 .totalPrice(total)
+                .status(BookingStatus.PENDING)
                 .build();
     }
 
     public static BookingResponseDto toResponse(Booking booking) {
         if (booking == null) return null;
         return BookingResponseDto.builder()
-                .id((long) booking.getId())
+                .id(booking.getId())
                 .userId(booking.getUser().getId())
                 .carId(booking.getCar().getId())
                 .startDate(booking.getStartDate())
