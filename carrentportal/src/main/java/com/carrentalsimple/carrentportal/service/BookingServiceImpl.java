@@ -85,6 +85,7 @@ public class BookingServiceImpl implements BookingService{
         }
 
         booking.setStatus(BookingStatus.CANCELLED);
+        booking.getCar().setAvailable(true);
         return BookingMapper.toResponse(bookingRepository.save(booking));
     }
 
@@ -93,6 +94,7 @@ public class BookingServiceImpl implements BookingService{
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new ResourceNotFound("Booking not Found"));
 
         booking.setStatus(BookingStatus.CONFIRMED);
+        booking.getCar().setAvailable(false);
         return BookingMapper.toResponse(bookingRepository.save(booking));
     }
 
@@ -101,6 +103,7 @@ public class BookingServiceImpl implements BookingService{
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new ResourceNotFound("Booking not found"));
 
         booking.setStatus(BookingStatus.COMPLETED);
+        booking.getCar().setAvailable(true);
         return BookingMapper.toResponse(bookingRepository.save(booking));
     }
 
@@ -113,6 +116,8 @@ public class BookingServiceImpl implements BookingService{
 
     @Override
     public List<BookingResponseDto> getBookingsByCar(Long carId) {
-        return null;
+        return bookingRepository.findByCarId(carId).stream()
+                .map(BookingMapper::toResponse)
+                .collect(Collectors.toList());
     }
 }
