@@ -31,12 +31,11 @@ public class BookingController {
         return ResponseEntity.ok(bookingService.getBookingByUser(userId));
     }
 
-    @PostMapping("/{booingId}/cancel/{userId}")
-    public ResponseEntity<BookingResponseDto> cancelBooking(@PathVariable Long bookingId,
-
-                                                            @PathVariable Long userId) {
+    @PostMapping("/{bookingId}/cancel/{userId}")
+    public ResponseEntity<BookingResponseDto> cancelBooking(
+            @PathVariable("bookingId") Long bookingId,
+            @PathVariable("userId") Long userId) {
         return ResponseEntity.ok(bookingService.cancelBooking(bookingId, userId));
-
     }
 
     @PostMapping("/{bookingId}/confirm")
