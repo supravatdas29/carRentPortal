@@ -15,6 +15,7 @@ public class SellerRequestMapper {
                 .carBrand(dto.getCarBrand())
                 .carModel(dto.getCarModel())
                 .year(dto.getYear())
+                .carDetails(dto.getCarDetails())
                 .expectedPrice(dto.getExpectedPrice())
                 .status(null) // let entity default = PENDING
                 .build();
@@ -34,6 +35,7 @@ public class SellerRequestMapper {
                 .carBrand(entity.getCarBrand())
                 .carModel(entity.getCarModel())
                 .year(entity.getYear())
+                .carDetails(entity.getCarDetails())
                 .expectedPrice(entity.getExpectedPrice())
                 .status(entity.getStatus())
                 .sellerId(entity.getSeller() != null ? entity.getSeller().getId() : null)

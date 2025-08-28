@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface SellerRequestRepository extends JpaRepository<SellerRequest,Long> {
     List<SellerRequest> findByStatus(SellerRequestStatus status);
+    List<SellerRequest> findBySellerId(Long sellerId);
 }

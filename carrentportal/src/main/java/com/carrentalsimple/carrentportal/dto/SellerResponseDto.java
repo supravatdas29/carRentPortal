@@ -13,6 +13,7 @@ public class SellerResponseDto {
     private String carBrand;
     private String carModel;
     private int year;
+    private String carDetails;
     private double expectedPrice;
     private SellerRequestStatus status;
 

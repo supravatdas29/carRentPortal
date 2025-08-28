@@ -14,6 +14,7 @@ public class SellerRequestDto {
     private String carBrand;
     private String carModel;
     private int year;
+    private String carDetails;
     private double expectedPrice;
 
 

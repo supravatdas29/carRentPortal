@@ -22,7 +22,7 @@ public class SellerRequest {
     private String carModel;
     private int year;
     private double expectedPrice;
-//    private String carDetails;
+    private String carDetails;
 
     @Enumerated(EnumType.STRING)
     private SellerRequestStatus status = SellerRequestStatus.PENDING;
