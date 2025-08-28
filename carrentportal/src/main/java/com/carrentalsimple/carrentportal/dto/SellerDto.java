@@ -14,5 +14,5 @@ public class SellerDto {
     private String name;
     private String email;
     private String phone;
-    private List<SellerRequestDto> requests;
+//    private List<SellerRequestDto> requests;
 }

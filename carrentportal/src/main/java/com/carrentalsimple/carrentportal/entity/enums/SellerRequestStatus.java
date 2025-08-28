@@ -1,7 +1,7 @@
 package com.carrentalsimple.carrentportal.entity.enums;
 
-public enum RequestStatus {
-    PENDING,
+public enum SellerRequestStatus {
+  PENDING,
     APPROVED,
     REJECTED
 }

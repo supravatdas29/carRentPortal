@@ -1,6 +1,6 @@
 package com.carrentalsimple.carrentportal.entity;
 
-import com.carrentalsimple.carrentportal.entity.enums.RequestStatus;
+import com.carrentalsimple.carrentportal.entity.enums.SellerRequestStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,12 +18,17 @@ public class SellerRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String carBrand;
+    private String carModel;
+    private int year;
+    private double expectedPrice;
+//    private String carDetails;
 
-    private String carDetails;
-
-    private RequestStatus status = RequestStatus.PENDING;
+    @Enumerated(EnumType.STRING)
+    private SellerRequestStatus status = SellerRequestStatus.PENDING;
 
     @ManyToOne
     @JoinColumn(name = "seller_id")
     private Seller seller;
+
 }

@@ -22,21 +22,21 @@ public class UserMapper {
     public static User fromCreate(UserCreateDto dto) {
         if (dto == null) return null;
 
-        UserRole role = UserRole.CUSTOMER; // default role
-        if (dto.getRole() != null) {
-            try {
-                role = UserRole.valueOf(dto.getRole().toUpperCase());
-            } catch (IllegalArgumentException e) {
-                // if invalid string is passed, fallback to CUSTOMER
-                role = UserRole.CUSTOMER;
-            }
-        }
+//        UserRole role = UserRole.CUSTOMER; // default role
+//        if (dto.getRole() != null) {
+//            try {
+//                role = UserRole.valueOf(dto.getRole().toUpperCase());
+//            } catch (IllegalArgumentException e) {
+//                // if invalid string is passed, fallback to CUSTOMER
+//                role = UserRole.CUSTOMER;
+//            }
+
 
         return User.builder()
                 .name(dto.getName())
                 .email(dto.getEmail())
                 .password(dto.getPassword()) // TODO: hash later
-                .role(role)
+//                .role(role)
                 .build();
     }
 }
