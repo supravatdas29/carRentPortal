@@ -24,11 +24,7 @@ public class UserController {
         return ResponseEntity.ok(userService.createUser(dto, UserRole.CUSTOMER));
     }
 
-    // --- SELLER APIs ---
-    @PostMapping("/sellers")
-    public ResponseEntity<UserResponseDto> createSeller(@Valid @RequestBody UserCreateDto dto) {
-        return ResponseEntity.ok(userService.createUser(dto, UserRole.SELLER));
-    }
+    // --- SELLER APIs --
 
     // --- COMMON APIs ---
     @GetMapping

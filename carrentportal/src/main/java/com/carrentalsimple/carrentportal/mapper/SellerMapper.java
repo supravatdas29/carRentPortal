@@ -6,6 +6,7 @@ import com.carrentalsimple.carrentportal.entity.Seller;
 
 public class SellerMapper {
 
+    //RequestDto --> Entity
     public static Seller toEntity(SellerCreateDto dto) {
         if (dto == null) return null;
 
@@ -16,6 +17,7 @@ public class SellerMapper {
                 .build();
     }
 
+    //Entity - ResponseDto
     public static SellerDto toDto(Seller entity) {
         if (entity == null) return null;
 

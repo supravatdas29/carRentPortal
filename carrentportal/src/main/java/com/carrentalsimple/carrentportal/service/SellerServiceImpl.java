@@ -3,6 +3,7 @@ package com.carrentalsimple.carrentportal.service;
 import com.carrentalsimple.carrentportal.dto.SellerCreateDto;
 import com.carrentalsimple.carrentportal.dto.SellerDto;
 import com.carrentalsimple.carrentportal.entity.Seller;
+import com.carrentalsimple.carrentportal.exception.ResourceNotFound;
 import com.carrentalsimple.carrentportal.mapper.SellerMapper;
 import com.carrentalsimple.carrentportal.repository.SellerRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,32 @@ public class SellerServiceImpl implements SellerService{
     }
 
     @Override
-    public List<Seller> getAllSeller() {
-        return List.of();
+    public SellerDto getSellerById(Long id) {
+        return sellerRepository.findById(id).map(SellerMapper::toDto).orElseThrow(() -> new ResourceNotFound("No such seller Found"));
+    }
+
+    @Override
+    public SellerDto updateSellerById(Long id, SellerCreateDto dto) {
+        Seller sellerById = sellerRepository.findById(id).orElseThrow(() -> new ResourceNotFound("No such seller Found"+id));
+
+        sellerById.setName(dto.getName());
+        sellerById.setEmail(dto.getEmail());
+        sellerById.setPhone(dto.getPhone());
+        Seller updated = sellerRepository.save(sellerById);
+        return SellerMapper.toDto(updated);
+    }
+
+    @Override
+    public List<SellerDto> getAllSeller() {
+        return sellerRepository.findAll().stream().map(SellerMapper::toDto).toList();
+    }
+
+    @Override
+    public void deleteSeller(Long id) {
+        if (!sellerRepository.existsById(id)) {
+            throw new ResourceNotFound("No such Seller found");
+        }
+        sellerRepository.deleteById(id);
     }
 }
+

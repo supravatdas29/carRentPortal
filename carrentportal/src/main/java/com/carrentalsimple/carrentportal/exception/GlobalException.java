@@ -3,6 +3,7 @@ package com.carrentalsimple.carrentportal.exception;
 import com.carrentalsimple.carrentportal.payload.ErrorDetails;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
@@ -21,6 +22,19 @@ public class GlobalException  {
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
 
     }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorDetails> handleValidationException(MethodArgumentNotValidException ex, WebRequest request) {
+        String errors = ex.getBindingResult().getFieldErrors()
+                .stream()
+                .map(err -> err.getField() + ": " + err.getDefaultMessage())
+                .findFirst()
+                .orElse("Validation error");
+
+        ErrorDetails errorDetails = new ErrorDetails(errors, new Date(), request.getDescription(false));
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
+
 
 
 

@@ -8,5 +8,8 @@ import java.util.List;
 
 public interface SellerService {
     SellerDto registerSeller(SellerCreateDto dto);
-    List<Seller> getAllSeller();
+    SellerDto getSellerById(Long id);
+    SellerDto updateSellerById(Long id, SellerCreateDto dto);
+    List<SellerDto> getAllSeller();
+    void deleteSeller(Long id);
 }

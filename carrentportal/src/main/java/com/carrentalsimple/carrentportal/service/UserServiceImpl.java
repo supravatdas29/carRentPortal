@@ -21,9 +21,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseDto createUser(UserCreateDto dto, UserRole role) {
-//        if (role == UserRole.ADMIN) {
-//            throw new IllegalArgumentException("Admins cannot be created via API. Insert manually in DB.");
-//        }
+       if (role == UserRole.ADMIN) {
+            throw new IllegalArgumentException("Admins cannot be created via API. Insert manually in DB.");
+         }
 
         User user = UserMapper.fromCreate(dto);
         user.setRole(UserRole.CUSTOMER);
