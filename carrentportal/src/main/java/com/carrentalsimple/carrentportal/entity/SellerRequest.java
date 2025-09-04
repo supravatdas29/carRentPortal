@@ -27,8 +27,10 @@ public class SellerRequest {
     @Enumerated(EnumType.STRING)
     private SellerRequestStatus status = SellerRequestStatus.PENDING;
 
-    @ManyToOne
-    @JoinColumn(name = "seller_id")
-    private Seller seller;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "seller_id", nullable = false)
+    private User seller;
+
+
 
 }

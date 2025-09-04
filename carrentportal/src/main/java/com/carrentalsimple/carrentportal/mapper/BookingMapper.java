@@ -19,7 +19,7 @@ public class BookingMapper {
         double total = days * car.getPricePerDay();
 
         return Booking.builder()
-                .user(user)
+                .customer(user)
                 .car(car)
                 .startDate(dto.getStartDate())
                 .endDate(dto.getEndDate())
@@ -32,7 +32,7 @@ public class BookingMapper {
         if (booking == null) return null;
         return BookingResponseDto.builder()
                 .id(booking.getId())
-                .userId(booking.getUser().getId())
+                .userId(booking.getCustomer().getId())
                 .carId(booking.getCar().getId())
                 .startDate(booking.getStartDate())
                 .endDate(booking.getEndDate())

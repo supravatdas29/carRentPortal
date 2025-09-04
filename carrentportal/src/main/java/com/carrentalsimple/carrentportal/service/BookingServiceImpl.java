@@ -12,6 +12,7 @@ import com.carrentalsimple.carrentportal.repository.BookingRepository;
 import com.carrentalsimple.carrentportal.repository.CarRepository;
 import com.carrentalsimple.carrentportal.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.awt.print.Book;
@@ -27,97 +28,65 @@ public class BookingServiceImpl implements BookingService{
     private final CarRepository carRepository;
     private final UserRepository userRepository;
 
-
     @Override
-    public BookingResponseDto createBooking(Long userId, Long carId, BookingRequestDto bookingRequestDto) {
-        Car car = carRepository.findById(carId)
-                .orElseThrow(() -> new RuntimeException("Car not found"));
+    public BookingResponseDto createBooking(BookingRequestDto request) {
+        Car car = carRepository.findById(request.getCarId()).
+                orElseThrow(() -> new ResourceNotFound("No Such Car Found"+request.getCarId()));
+        User customer = userRepository.findById(request.getCustomerId())
+                .orElseThrow(() -> new ResourceNotFound("User not found with ID " + request.getCustomerId()));
 
-        if (!car.isAvailable()) {
-            throw new RuntimeException("Car is not available for booking");
+        boolean available = bookingRepository.findOverlappingBookings(car.getId(),request.getStartDate(),request.getEndDate()).isEmpty();
+
+        if(!available){
+            throw new IllegalStateException("Car is Not available for Booking for selected dates.");
+
         }
-        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFound("No Customer Found with id"));
-        long days = ChronoUnit.DAYS.between(bookingRequestDto.getStartDate(), bookingRequestDto.getEndDate());
-        if (days <= 0) {
+
+        long days = ChronoUnit.DAYS.between(request.getStartDate(), request.getEndDate()) + 1;// inclusive
+        if(days <= 0){
             throw new RuntimeException("End date must be after start date");
         }
+        double totalPrice = days * car.getPricePerDay();
 
-        double totalPrice = car.getPricePerDay() * days;
-
-       Booking booking = BookingMapper.toEntity(user,car,bookingRequestDto);
-       car.setAvailable(false);
-       booking.setStatus(BookingStatus.COMPLETED);
-       carRepository.save(car);
+        Booking booking = BookingMapper.toEntity(customer,car,request);
+        car.setAvailable(false);
+        booking.setStatus(BookingStatus.CONFIRMED);
+        carRepository.save(car);
 
         Booking saved = bookingRepository.save(booking);
 
-        // return response DTO
         return BookingMapper.toResponse(saved);
-
-
 
     }
 
     @Override
     public BookingResponseDto getBookingById(Long id) {
-
-        Booking booking = bookingRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFound("Booking not found with id " + id));
-        return BookingMapper.toResponse(booking);
+        Booking booking = bookingRepository.findById(id).orElseThrow(() -> new ResourceNotFound("No such User found"));
+         return BookingMapper.toResponse(booking);
     }
 
     @Override
-    public List<BookingResponseDto> getBookingByUser(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFound("User not found with id " + userId));
-        return bookingRepository.findByUser(user)
-                .stream()
-                .map(BookingMapper::toResponse)
-                .toList();
-
+    public List<BookingResponseDto> getBookingByUser(Long customerId) {
+        return bookingRepository.findByCustomerId(customerId).stream()
+                .map(BookingMapper::toResponse).toList();
     }
 
     @Override
-    public BookingResponseDto cancelBooking(Long bookingId, Long userId) {
-        Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new ResourceNotFound("Booking not found"));
-        if (!booking.getUser().getId().equals(userId)){
-            throw new RuntimeException("You can cancel only your booking");
-        }
-
+    public void cancelBooking(Long bookingId) {
+        Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new ResourceNotFound("No such User found"));
         booking.setStatus(BookingStatus.CANCELLED);
-        booking.getCar().setAvailable(true);
-        return BookingMapper.toResponse(bookingRepository.save(booking));
-    }
+        Car car = booking.getCar();
+        car.setAvailable(true);
+        carRepository.save(car);
 
-    @Override
-    public BookingResponseDto confirmBooking(Long bookingId) {
-        Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new ResourceNotFound("Booking not Found"));
+         bookingRepository.save(booking);
 
-        booking.setStatus(BookingStatus.CONFIRMED);
-        booking.getCar().setAvailable(false);
-        return BookingMapper.toResponse(bookingRepository.save(booking));
-    }
-
-    @Override
-    public BookingResponseDto completeBooking(Long bookingId) {
-        Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new ResourceNotFound("Booking not found"));
-
-        booking.setStatus(BookingStatus.COMPLETED);
-        booking.getCar().setAvailable(true);
-        return BookingMapper.toResponse(bookingRepository.save(booking));
     }
 
     @Override
     public List<BookingResponseDto> getAllBookings() {
         return bookingRepository.findAll().stream()
                 .map(BookingMapper::toResponse)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<BookingResponseDto> getBookingsByCar(Long carId) {
-        return bookingRepository.findByCarId(carId).stream()
-                .map(BookingMapper::toResponse)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

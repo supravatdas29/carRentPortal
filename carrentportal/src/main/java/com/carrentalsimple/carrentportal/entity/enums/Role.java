@@ -1,7 +1,8 @@
 package com.carrentalsimple.carrentportal.entity.enums;
 
-public enum UserRole {
+public enum Role {
     ADMIN,
     CUSTOMER,
+    SELLER
 
 }

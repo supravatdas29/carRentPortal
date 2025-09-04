@@ -1,6 +1,6 @@
 package com.carrentalsimple.carrentportal.dto;
 
-import com.carrentalsimple.carrentportal.entity.enums.UserRole;
+import com.carrentalsimple.carrentportal.entity.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,6 +14,6 @@ public class UserResponseDto {
     private Long id;
     private String name;
     private String email;
-    private UserRole role;
+    private Role role;
 
 }

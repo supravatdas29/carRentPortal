@@ -19,10 +19,16 @@ public class Car {
     private String brand;
 
     private String model;
+    private String fuelType;
 
     private int year;
 
     private double pricePerDay;
 
     private boolean available = true;
+    // optional: track whether driver is required
+    private boolean withDriverAvailable = true;
+
+    // optional: track whether self-drive is allowed
+    private boolean selfDriveAvailable = true;
 }

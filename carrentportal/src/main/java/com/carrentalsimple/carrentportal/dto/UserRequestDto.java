@@ -1,5 +1,6 @@
 package com.carrentalsimple.carrentportal.dto;
 
+import com.carrentalsimple.carrentportal.entity.enums.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -11,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserCreateDto {
+public class UserRequestDto {
     @NotBlank
     private String name;
     @Email@NotBlank
@@ -20,7 +21,7 @@ public class UserCreateDto {
     @NotBlank
     private String password;
 
-//    private String role;
+    private Role role;
 
 
 }

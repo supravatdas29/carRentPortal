@@ -1,3 +1,4 @@
+// src/main/java/com/carrentalsimple/carrentportal/controller/BookingController.java
 package com.carrentalsimple.carrentportal.controller;
 
 import com.carrentalsimple.carrentportal.dto.BookingRequestDto;
@@ -5,6 +6,9 @@ import com.carrentalsimple.carrentportal.dto.BookingResponseDto;
 import com.carrentalsimple.carrentportal.service.BookingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,41 +17,36 @@ import java.util.List;
 @RequestMapping("/api/bookings")
 @RequiredArgsConstructor
 public class BookingController {
+
     private final BookingService bookingService;
 
-
-    @PostMapping("/users/{userId}/cars/{carId}")
-    public ResponseEntity<BookingResponseDto> createBooking(@PathVariable Long userId, @PathVariable Long carId, @RequestBody BookingRequestDto bookingRequestDto) {
-        return ResponseEntity.ok(bookingService.createBooking(userId, carId, bookingRequestDto));
+    // ✅ Create booking
+    @PostMapping
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<BookingResponseDto> createBooking(@RequestBody BookingRequestDto dto) {
+        return ResponseEntity.ok(bookingService.createBooking(dto));
     }
 
+    // ✅ View user’s bookings
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('CUSTOMER','ADMIN')")
     public ResponseEntity<BookingResponseDto> getBookingById(@PathVariable Long id) {
-        return ResponseEntity.ok(bookingService.getBookingById(id));
+        BookingResponseDto response = bookingService.getBookingById(id);
+        return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/users/{userId}")
-    public ResponseEntity<List<BookingResponseDto>> getBookingByUser(@PathVariable Long userId) {
-        return ResponseEntity.ok(bookingService.getBookingByUser(userId));
+    // ✅ Cancel booking
+    @PutMapping("/{id}/cancel")
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<String> cancelBooking(@PathVariable Long id) {
+        bookingService.cancelBooking(id);
+        return ResponseEntity.ok("Booking cancelled successfully");
+    }
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<BookingResponseDto>> getAllBookings() {
+        return ResponseEntity.ok(bookingService.getAllBookings());
     }
 
-    @PostMapping("/{bookingId}/cancel/{userId}")
-    public ResponseEntity<BookingResponseDto> cancelBooking(
-            @PathVariable("bookingId") Long bookingId,
-            @PathVariable("userId") Long userId) {
-        return ResponseEntity.ok(bookingService.cancelBooking(bookingId, userId));
-    }
 
-    @PostMapping("/{bookingId}/confirm")
-    public ResponseEntity<BookingResponseDto> confirmBooking(@PathVariable Long bookingId) {
-        return ResponseEntity.ok(bookingService.completeBooking(bookingId));
-
-
-    }
-
-    @PostMapping("/{bookingId}/complete")
-    public ResponseEntity<BookingResponseDto> completeBooking(@PathVariable Long bookingId) {
-        return ResponseEntity.ok(bookingService.completeBooking(bookingId));
-
-    }
 }

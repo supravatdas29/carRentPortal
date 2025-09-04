@@ -5,6 +5,7 @@ import com.carrentalsimple.carrentportal.dto.CarResponseDto;
 import com.carrentalsimple.carrentportal.service.CarService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
@@ -18,24 +19,19 @@ public class CarController {
     private final CarService carService;
 
     // ✅ Only Admin can add
-    @PostMapping("/admin/{adminId}")
-    public ResponseEntity<CarResponseDto> createCar(@PathVariable Long adminId,
-                                                    @Valid @RequestBody CarRequestDto requestDto) {
-        return ResponseEntity.ok(carService.createCar(adminId, requestDto));
+    @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<CarResponseDto> addCar(@RequestBody CarRequestDto requestDto) {
+        return ResponseEntity.ok(carService.addCar(requestDto));
     }
 
-    // ✅ Only Admin can update
-    @PutMapping("/admin/{adminId}/{carId}")
-    public ResponseEntity<CarResponseDto> updateCar(@PathVariable Long adminId,
-                                                    @PathVariable Long carId,
-                                                    @Valid @RequestBody CarRequestDto requestDto) {
-        return ResponseEntity.ok(carService.updateCar(adminId, carId, requestDto));
-    }
+
 
     // ✅ Only Admin can delete
-    @DeleteMapping("/admin/{adminId}/{carId}")
-    public ResponseEntity<Void> deleteCar(@PathVariable Long adminId, @PathVariable Long carId) {
-        carService.deleteCar(adminId, carId);
+    @DeleteMapping("deleteById/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> deleteCar( @PathVariable Long id) {
+        carService.removeCar(id);
         return ResponseEntity.noContent().build();
     }
 
@@ -46,7 +42,8 @@ public class CarController {
     }
 
     // ✅ Anyone can view car details
-    @GetMapping("/{carId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/getById/{Id}")
     public ResponseEntity<CarResponseDto> getCarById(@PathVariable Long carId) {
         return ResponseEntity.ok(carService.getCarById(carId));
     }

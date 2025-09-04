@@ -17,5 +17,5 @@ public class SellerResponseDto {
     private double expectedPrice;
     private SellerRequestStatus status;
 
-    private Long sellerId; // keep reference only, not full entity
+
 }

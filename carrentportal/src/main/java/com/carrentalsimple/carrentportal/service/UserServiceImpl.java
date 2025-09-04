@@ -1,14 +1,17 @@
 package com.carrentalsimple.carrentportal.service;
 
-import com.carrentalsimple.carrentportal.dto.UserCreateDto;
+
+import com.carrentalsimple.carrentportal.dto.UserRequestDto;
 import com.carrentalsimple.carrentportal.dto.UserResponseDto;
 import com.carrentalsimple.carrentportal.entity.User;
-import com.carrentalsimple.carrentportal.entity.enums.UserRole;
+import com.carrentalsimple.carrentportal.entity.enums.Role;
 import com.carrentalsimple.carrentportal.exception.ResourceNotFound;
 import com.carrentalsimple.carrentportal.mapper.UserMapper;
 import com.carrentalsimple.carrentportal.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,24 +20,35 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
 
     @Override
-    public UserResponseDto createUser(UserCreateDto dto, UserRole role) {
-       if (role == UserRole.ADMIN) {
-            throw new IllegalArgumentException("Admins cannot be created via API. Insert manually in DB.");
-         }
+    @Transactional
+    public UserResponseDto createUser(UserRequestDto req) {
+       if (userRepository.findByEmail(req.getEmail()).isPresent()) {
+            throw new RuntimeException("Email already exists: " + req.getEmail());
+        }
 
-        User user = UserMapper.fromCreate(dto);
-        user.setRole(UserRole.CUSTOMER);
+        if (req.getPassword() == null || req.getPassword().isBlank()) {
+            throw new IllegalArgumentException("Password cannot be null or blank");
+        }
+
+
+        User user = UserMapper.toEntity(req);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
         User saveUser = userRepository.save(user);
-        return UserMapper.toResponse(saveUser);
+        return UserMapper.toResponseDto(saveUser);
     }
 
+
+
     @Override
+
     public UserResponseDto getUserById(Long id) {
         return userRepository.findById(id)
-                .map(UserMapper::toResponse)
+                .map(UserMapper::toResponseDto)
                 .orElseThrow(() -> new ResourceNotFound("User not found with id: " + id));
     }
 
@@ -42,21 +56,24 @@ public class UserServiceImpl implements UserService {
     public List<UserResponseDto> getAllUsers() {
         return  userRepository.findAll()
                 .stream()
-                .map(UserMapper::toResponse)
+                .map(UserMapper::toResponseDto)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public UserResponseDto updateUser(Long id, UserCreateDto dto) {
+    @Transactional
+    public UserResponseDto updateUser(Long id, UserRequestDto req) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with id " + id));
+                .orElseThrow(() -> new ResourceNotFound("User not found with id " + id));
 
-        user.setName(dto.getName());
-        user.setEmail(dto.getEmail());
-        user.setPassword(dto.getPassword()); // later we hash this
+        user.setName(req.getName());
+        if (req.getPassword() != null && !req.getPassword().isBlank()) {
+            user.setPassword(passwordEncoder.encode(req.getPassword()));
+        }
+       user.setRole(req.getRole()); // later we hash this
 
         User updated = userRepository.save(user);
-        return UserMapper.toResponse(updated);
+        return UserMapper.toResponseDto(updated);
     }
 
     @Override

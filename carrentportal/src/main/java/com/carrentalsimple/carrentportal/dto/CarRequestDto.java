@@ -16,8 +16,12 @@ public class CarRequestDto {
     private String brand;
     @NotBlank
     private String model;
+    @NotBlank
+    private String fuelType;
     @Min(1886)
     private int year;
     @Min(0)
     private double pricePerDay;
+    private boolean withDriverAvailable;
+    private boolean selfDriveAvailable;
 }

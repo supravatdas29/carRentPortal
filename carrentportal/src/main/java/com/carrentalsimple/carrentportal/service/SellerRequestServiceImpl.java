@@ -2,33 +2,32 @@ package com.carrentalsimple.carrentportal.service;
 
 import com.carrentalsimple.carrentportal.dto.SellerRequestDto;
 import com.carrentalsimple.carrentportal.dto.SellerResponseDto;
-import com.carrentalsimple.carrentportal.entity.Seller;
 import com.carrentalsimple.carrentportal.entity.SellerRequest;
+import com.carrentalsimple.carrentportal.entity.User;
 import com.carrentalsimple.carrentportal.entity.enums.SellerRequestStatus;
 import com.carrentalsimple.carrentportal.exception.ResourceNotFound;
 import com.carrentalsimple.carrentportal.mapper.SellerRequestMapper;
-import com.carrentalsimple.carrentportal.repository.SellerRepository;
 import com.carrentalsimple.carrentportal.repository.SellerRequestRepository;
+import com.carrentalsimple.carrentportal.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class SellerRequestServiceImpl implements SellerRequestService{
 
-    private final SellerRepository sellerRepository;
+    private final UserRepository userRepository;
     private final SellerRequestRepository sellerRequestRepository;
 
     @Override
     public SellerResponseDto createRequest(Long sellerId, SellerRequestDto dto) {
-        Seller seller = sellerRepository.findById(sellerId).orElseThrow(() -> new ResourceNotFound("Seller  not found"));
+        User seller = userRepository.findById(sellerId).orElseThrow(() -> new ResourceNotFound("No Seller Found"+sellerId));
 
-        SellerRequest request = SellerRequestMapper.toEntity(dto);
-        request.setSeller(seller);
-        request.setStatus(SellerRequestStatus.PENDING);
+
+        SellerRequest request = SellerRequestMapper.toEntity(dto,seller);
+//        request.setStatus(SellerRequestStatus.PENDING);
 
 
 
@@ -38,7 +37,7 @@ public class SellerRequestServiceImpl implements SellerRequestService{
 
     @Override
     public List<SellerResponseDto> getRequestBySeller(Long sellerId) {
-        return sellerRequestRepository.findBySellerId(sellerId).stream()
+        return sellerRequestRepository.findBySeller_Id(sellerId).stream()
                 .map(SellerRequestMapper::toResponseDto).toList();
     }
 

@@ -1,6 +1,6 @@
 package com.carrentalsimple.carrentportal.entity;
 
-import com.carrentalsimple.carrentportal.entity.enums.UserRole;
+import com.carrentalsimple.carrentportal.entity.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,12 +16,16 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
+    @Column(unique = true,nullable = false)
     private String email;
 
+    @Column(nullable = false)
     private String password;
 
     @Enumerated(EnumType.STRING)
-    private UserRole role;
+    @Column(nullable = false)
+    private Role role;
 }

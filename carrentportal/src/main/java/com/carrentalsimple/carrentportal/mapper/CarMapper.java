@@ -12,20 +12,26 @@ public class CarMapper {
                 .id(car.getId())
                 .brand(car.getBrand())
                 .model(car.getModel())
+                .fuelType(car.getFuelType())
                 .year(car.getYear())
                 .pricePerDay(car.getPricePerDay())
+                .withDriverAvailable(car.isWithDriverAvailable())
+                .selfDriveAvailable(car.isSelfDriveAvailable())
                 .available(car.isAvailable())
                 .build();
     }
 
-    public static Car fromRequest(CarRequestDto dto){
+    public static Car toEntity(CarRequestDto dto){
         if(dto == null ) return null;
         return Car.builder()
                 .brand(dto.getBrand())
                 .model(dto.getModel())
+                .fuelType(dto.getFuelType())
                 .year(dto.getYear())
                 .pricePerDay(dto.getPricePerDay())
                 .available(true)
+                .withDriverAvailable(dto.isWithDriverAvailable())
+                .selfDriveAvailable(dto.isSelfDriveAvailable())
                 .build();
     }
     public static void updateEntity(Car car, CarRequestDto dto) {

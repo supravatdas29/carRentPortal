@@ -2,13 +2,14 @@ package com.carrentalsimple.carrentportal.mapper;
 
 import com.carrentalsimple.carrentportal.dto.SellerRequestDto;
 import com.carrentalsimple.carrentportal.dto.SellerResponseDto;
-import com.carrentalsimple.carrentportal.entity.Seller;
 import com.carrentalsimple.carrentportal.entity.SellerRequest;
+import com.carrentalsimple.carrentportal.entity.User;
+import com.carrentalsimple.carrentportal.entity.enums.SellerRequestStatus;
 
 public class SellerRequestMapper {
 
     // DTO -> Entity (for creation)
-    public static SellerRequest toEntity(SellerRequestDto dto) {
+    public static SellerRequest toEntity(SellerRequestDto dto, User seller) {
         if (dto == null) return null;
 
         SellerRequest request = SellerRequest.builder()
@@ -17,7 +18,8 @@ public class SellerRequestMapper {
                 .year(dto.getYear())
                 .carDetails(dto.getCarDetails())
                 .expectedPrice(dto.getExpectedPrice())
-                .status(null) // let entity default = PENDING
+                .status(SellerRequestStatus.PENDING)
+                .seller(seller)// let entity default = PENDING
                 .build();
 
         // map sellerId -> Seller
@@ -38,7 +40,6 @@ public class SellerRequestMapper {
                 .carDetails(entity.getCarDetails())
                 .expectedPrice(entity.getExpectedPrice())
                 .status(entity.getStatus())
-                .sellerId(entity.getSeller() != null ? entity.getSeller().getId() : null)
                 .build();
     }
 }

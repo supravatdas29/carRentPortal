@@ -14,11 +14,11 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BookingRequestDto {
-//    @NotNull
-//    private Long userId;
-//
-//    @NotNull
-//    private Long carId;
+    @NotNull
+    private Long customerId;
+
+    @NotNull
+    private Long carId;
 
     @NotNull@FutureOrPresent
     private LocalDate startDate;

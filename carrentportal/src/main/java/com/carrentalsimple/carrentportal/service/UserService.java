@@ -1,18 +1,21 @@
 package com.carrentalsimple.carrentportal.service;
 
-import com.carrentalsimple.carrentportal.dto.UserCreateDto;
+import com.carrentalsimple.carrentportal.dto.UserRequestDto;
 import com.carrentalsimple.carrentportal.dto.UserResponseDto;
-import com.carrentalsimple.carrentportal.entity.enums.UserRole;
+import com.carrentalsimple.carrentportal.entity.enums.Role;
+
 
 import java.util.List;
 
 public interface UserService {
-    UserResponseDto createUser(UserCreateDto dto, UserRole role);
+    UserResponseDto createUser(UserRequestDto req);
+
 
     UserResponseDto getUserById(Long id);
 
+
     List<UserResponseDto> getAllUsers();
-    UserResponseDto updateUser(Long id, UserCreateDto dto);
+    UserResponseDto updateUser(Long id, UserRequestDto dto);
 
     void deleteUser(Long id);
 }
