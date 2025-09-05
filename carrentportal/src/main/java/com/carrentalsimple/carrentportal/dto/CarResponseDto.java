@@ -13,6 +13,7 @@ public class CarResponseDto {
     private Long id;
     private String brand;
     private String model;
+    private String registrationNumber;
     private String fuelType;
     private int year;
     private double pricePerDay;

@@ -27,8 +27,8 @@ public class SellerRequestController {
             @RequestBody SellerRequestDto dto) {
 
         // ✅ sellerId from token
-        Long sellerId = Long.parseLong(userDetails.getUsername()); // username = userId in JWT
-        return ResponseEntity.ok(sellerRequestService.createRequest(sellerId, dto));
+       String email = userDetails.getUsername(); // username = userId in JWT
+        return ResponseEntity.ok(sellerRequestService.createRequest(email, dto));
     }
 
     // Seller fetches their own requests

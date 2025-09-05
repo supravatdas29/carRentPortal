@@ -22,8 +22,8 @@ public class SellerRequestServiceImpl implements SellerRequestService{
     private final SellerRequestRepository sellerRequestRepository;
 
     @Override
-    public SellerResponseDto createRequest(Long sellerId, SellerRequestDto dto) {
-        User seller = userRepository.findById(sellerId).orElseThrow(() -> new ResourceNotFound("No Seller Found"+sellerId));
+    public SellerResponseDto createRequest(String email, SellerRequestDto dto) {
+        User seller = userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFound("No Seller Found"+email));
 
 
         SellerRequest request = SellerRequestMapper.toEntity(dto,seller);

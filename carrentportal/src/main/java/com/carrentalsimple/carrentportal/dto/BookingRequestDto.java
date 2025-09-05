@@ -14,8 +14,8 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BookingRequestDto {
-    @NotNull
-    private Long customerId;
+//    @NotNull
+//    private Long customerId;
 
     @NotNull
     private Long carId;

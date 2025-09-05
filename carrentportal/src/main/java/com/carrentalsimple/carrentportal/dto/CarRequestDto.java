@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.UniqueElements;
 
 @Data
 @Builder
@@ -16,6 +17,8 @@ public class CarRequestDto {
     private String brand;
     @NotBlank
     private String model;
+    @NotBlank
+    private String registrationNumber;
     @NotBlank
     private String fuelType;
     @Min(1886)

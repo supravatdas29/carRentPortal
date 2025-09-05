@@ -12,6 +12,7 @@ public class CarMapper {
                 .id(car.getId())
                 .brand(car.getBrand())
                 .model(car.getModel())
+                .registrationNumber(car.getRegistrationNumber())
                 .fuelType(car.getFuelType())
                 .year(car.getYear())
                 .pricePerDay(car.getPricePerDay())
@@ -26,6 +27,7 @@ public class CarMapper {
         return Car.builder()
                 .brand(dto.getBrand())
                 .model(dto.getModel())
+                .registrationNumber(dto.getRegistrationNumber())
                 .fuelType(dto.getFuelType())
                 .year(dto.getYear())
                 .pricePerDay(dto.getPricePerDay())
@@ -38,6 +40,7 @@ public class CarMapper {
         if (car == null || dto == null) return;
         car.setBrand(dto.getBrand());
         car.setModel(dto.getModel());
+        car.setRegistrationNumber(dto.getRegistrationNumber());
         car.setYear(dto.getYear());
         car.setPricePerDay(dto.getPricePerDay());
         // available is controlled by booking flow; don't set here

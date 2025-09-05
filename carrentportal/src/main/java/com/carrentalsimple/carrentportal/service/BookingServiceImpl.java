@@ -29,11 +29,11 @@ public class BookingServiceImpl implements BookingService{
     private final UserRepository userRepository;
 
     @Override
-    public BookingResponseDto createBooking(BookingRequestDto request) {
+    public BookingResponseDto createBooking(Long userId,BookingRequestDto request) {
         Car car = carRepository.findById(request.getCarId()).
                 orElseThrow(() -> new ResourceNotFound("No Such Car Found"+request.getCarId()));
-        User customer = userRepository.findById(request.getCustomerId())
-                .orElseThrow(() -> new ResourceNotFound("User not found with ID " + request.getCustomerId()));
+        User customer = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFound("User not found with ID " + userId));
 
         boolean available = bookingRepository.findOverlappingBookings(car.getId(),request.getStartDate(),request.getEndDate()).isEmpty();
 

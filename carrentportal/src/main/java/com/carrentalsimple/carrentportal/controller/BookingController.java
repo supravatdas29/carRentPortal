@@ -4,6 +4,7 @@ package com.carrentalsimple.carrentportal.controller;
 import com.carrentalsimple.carrentportal.dto.BookingRequestDto;
 import com.carrentalsimple.carrentportal.dto.BookingResponseDto;
 import com.carrentalsimple.carrentportal.service.BookingService;
+import com.carrentalsimple.carrentportal.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,12 +20,18 @@ import java.util.List;
 public class BookingController {
 
     private final BookingService bookingService;
+    private final UserService userService;
 
     // ✅ Create booking
     @PostMapping
     @PreAuthorize("hasRole('CUSTOMER')")
-    public ResponseEntity<BookingResponseDto> createBooking(@RequestBody BookingRequestDto dto) {
-        return ResponseEntity.ok(bookingService.createBooking(dto));
+    public ResponseEntity<BookingResponseDto> createBooking(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody BookingRequestDto dto) {
+
+        String email = userDetails.getUsername();
+        Long userId = userService.getUserIdByEmail(email);// helper method
+        return ResponseEntity.ok(bookingService.createBooking(userId, dto));
     }
 
     // ✅ View user’s bookings

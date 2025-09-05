@@ -19,6 +19,9 @@ public class Car {
     private String brand;
 
     private String model;
+
+    @Column(unique = true,nullable = false)
+    private String registrationNumber;
     private String fuelType;
 
     private int year;
