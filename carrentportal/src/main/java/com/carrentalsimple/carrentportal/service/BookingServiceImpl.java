@@ -14,6 +14,7 @@ import com.carrentalsimple.carrentportal.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.awt.print.Book;
 import java.time.temporal.ChronoUnit;
@@ -29,6 +30,7 @@ public class BookingServiceImpl implements BookingService{
     private final UserRepository userRepository;
 
     @Override
+    @Transactional
     public BookingResponseDto createBooking(Long userId,BookingRequestDto request) {
         Car car = carRepository.findById(request.getCarId()).
                 orElseThrow(() -> new ResourceNotFound("No Such Car Found"+request.getCarId()));

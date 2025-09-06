@@ -4,6 +4,7 @@ package com.carrentalsimple.carrentportal.controller;
 import com.carrentalsimple.carrentportal.dto.UserRequestDto;
 import com.carrentalsimple.carrentportal.dto.UserResponseDto;
 import com.carrentalsimple.carrentportal.entity.enums.Role;
+import com.carrentalsimple.carrentportal.payload.APIResponse;
 import com.carrentalsimple.carrentportal.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -34,14 +35,22 @@ public class UserController {
     // --- COMMON APIs ---
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
-    public ResponseEntity<List<UserResponseDto>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+    public ResponseEntity<APIResponse<List<UserResponseDto>>> getAllUsers() {
+        List<UserResponseDto> allUsers = userService.getAllUsers();
+
+
+
+            return ResponseEntity.ok(APIResponse.success("All User List", allUsers));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponseDto> getUserById(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.getUserById(id));
+    public ResponseEntity<APIResponse<UserResponseDto>> getUserById(@PathVariable Long id) {
+        UserResponseDto userResponseDto = userService.getUserById(id);
+
+        return ResponseEntity.ok(APIResponse.success("User Fetched Successfully",userResponseDto));
+
+
     }
 
     @PreAuthorize("hasRole('ADMIN')")

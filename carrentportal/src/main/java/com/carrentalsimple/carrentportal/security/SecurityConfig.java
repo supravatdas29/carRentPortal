@@ -32,7 +32,8 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**","/api/users/register").permitAll()
+                        .requestMatchers("/api/v1/auth/**"
+                        ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/cars/**").permitAll()
                         .anyRequest().authenticated()
                 )

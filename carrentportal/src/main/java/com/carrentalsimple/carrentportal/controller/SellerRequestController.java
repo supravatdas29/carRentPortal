@@ -2,6 +2,7 @@ package com.carrentalsimple.carrentportal.controller;
 
 import com.carrentalsimple.carrentportal.dto.SellerRequestDto;
 import com.carrentalsimple.carrentportal.dto.SellerResponseDto;
+import com.carrentalsimple.carrentportal.payload.APIResponse;
 import com.carrentalsimple.carrentportal.service.SellerRequestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/seller-requests")
+@RequestMapping("/api/v1/seller-requests")
 @RequiredArgsConstructor
 public class SellerRequestController {
 
@@ -22,13 +23,15 @@ public class SellerRequestController {
     // Seller creates a request (sellerId comes from JWT)
     @PostMapping
     @PreAuthorize("hasRole('SELLER')")
-    public ResponseEntity<SellerResponseDto> createSellerRequest(
+    public ResponseEntity<APIResponse<SellerResponseDto>> createSellerRequest(
+
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody SellerRequestDto dto) {
 
         // ✅ sellerId from token
        String email = userDetails.getUsername(); // username = userId in JWT
-        return ResponseEntity.ok(sellerRequestService.createRequest(email, dto));
+        SellerResponseDto request = sellerRequestService.createRequest(email, dto);
+        return ResponseEntity.ok(APIResponse.success("Request Successfully Send ",request));
     }
 
     // Seller fetches their own requests
