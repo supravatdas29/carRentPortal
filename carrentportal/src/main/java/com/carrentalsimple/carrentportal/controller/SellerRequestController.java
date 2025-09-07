@@ -37,35 +37,38 @@ public class SellerRequestController {
     // Seller fetches their own requests
     @GetMapping("/my")
     @PreAuthorize("hasRole('SELLER')")
-    public ResponseEntity<List<SellerResponseDto>> getMyRequests(
+    public ResponseEntity<APIResponse<List<SellerResponseDto>>> getMyRequests(
             @AuthenticationPrincipal UserDetails userDetails) {
 
         Long sellerId = Long.parseLong(userDetails.getUsername());
-        return ResponseEntity.ok(sellerRequestService.getRequestBySeller(sellerId));
+        List<SellerResponseDto> bySeller = sellerRequestService.getRequestBySeller(sellerId);
+        return ResponseEntity.ok(APIResponse.success("Here are Your Request Details ",bySeller));
     }
 
     // Admin: get requests by status
     @GetMapping("/status/{status}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<SellerResponseDto>> getRequestsByStatus(@PathVariable String status) {
-        return ResponseEntity.ok(sellerRequestService.gerRequestByStatus(status));
+    public ResponseEntity<APIResponse<List<SellerResponseDto>>> getRequestsByStatus(@PathVariable String status) {
+        List<SellerResponseDto> dtos = sellerRequestService.gerRequestByStatus(status);
+        return ResponseEntity.ok(APIResponse.success("Request By Status",dtos));
     }
 
     // Admin: update request status
     @PutMapping("/{requestId}/status/{status}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<SellerResponseDto> updateRequestStatus(
+    public ResponseEntity<APIResponse<SellerResponseDto>> updateRequestStatus(
             @PathVariable Long requestId,
             @PathVariable String status) {
-        return ResponseEntity.ok(sellerRequestService.updateRequestStatus(requestId, status));
+        SellerResponseDto dto = sellerRequestService.updateRequestStatus(requestId, status);
+        return ResponseEntity.ok(APIResponse.success("Status Update",dto));
     }
 
     // Admin: delete a request
     @DeleteMapping("/{requestId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<String> deleteRequest(@PathVariable Long requestId) {
+    public ResponseEntity<APIResponse<String>> deleteRequest(@PathVariable Long requestId) {
         sellerRequestService.deleteRequest(requestId);
-        return ResponseEntity.ok("Seller Request deleted successfully!");
+        return ResponseEntity.ok(APIResponse.success("Deleted","Seller Request deleted successfully!"));
     }
 }
 

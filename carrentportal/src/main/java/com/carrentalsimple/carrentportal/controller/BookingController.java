@@ -1,8 +1,8 @@
-// src/main/java/com/carrentalsimple/carrentportal/controller/BookingController.java
 package com.carrentalsimple.carrentportal.controller;
 
 import com.carrentalsimple.carrentportal.dto.BookingRequestDto;
 import com.carrentalsimple.carrentportal.dto.BookingResponseDto;
+import com.carrentalsimple.carrentportal.payload.APIResponse;
 import com.carrentalsimple.carrentportal.service.BookingService;
 import com.carrentalsimple.carrentportal.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -25,35 +25,49 @@ public class BookingController {
     // ✅ Create booking
     @PostMapping
     @PreAuthorize("hasRole('CUSTOMER')")
-    public ResponseEntity<BookingResponseDto> createBooking(
+    public ResponseEntity<APIResponse<BookingResponseDto>> createBooking(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody BookingRequestDto dto) {
 
         String email = userDetails.getUsername();
-        Long userId = userService.getUserIdByEmail(email);// helper method
-        return ResponseEntity.ok(bookingService.createBooking(userId, dto));
+        Long userId = userService.getUserIdByEmail(email);
+        BookingResponseDto booking = bookingService.createBooking(userId, dto);
+
+        return ResponseEntity.ok(APIResponse.success("Booking Successful", booking));
     }
 
-    // ✅ View user’s bookings
+    // ✅ View my bookings (Customer)
+    @GetMapping("/my-bookings")
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<APIResponse<List<BookingResponseDto>>> getMyBookings(
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        String email = userDetails.getUsername();
+        Long userId = userService.getUserIdByEmail(email);
+
+        return ResponseEntity.ok(APIResponse.success("My Bookings", bookingService.getBookingByUser(userId)));
+    }
+
+    // ✅ View single booking (Admin only)
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('CUSTOMER','ADMIN')")
-    public ResponseEntity<BookingResponseDto> getBookingById(@PathVariable Long id) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<APIResponse<BookingResponseDto>> getBookingById(@PathVariable Long id) {
         BookingResponseDto response = bookingService.getBookingById(id);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(APIResponse.success("Booking Found", response));
     }
 
-    // ✅ Cancel booking
+    // ✅ Cancel booking (Customer)
     @PutMapping("/{id}/cancel")
     @PreAuthorize("hasRole('CUSTOMER')")
-    public ResponseEntity<String> cancelBooking(@PathVariable Long id) {
+    public ResponseEntity<APIResponse<String>> cancelBooking(@PathVariable Long id) {
         bookingService.cancelBooking(id);
-        return ResponseEntity.ok("Booking cancelled successfully");
+        return ResponseEntity.ok(APIResponse.success("Booking cancelled successfully", "CANCELLED"));
     }
+
+    // ✅ Get all bookings (Admin only)
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<BookingResponseDto>> getAllBookings() {
-        return ResponseEntity.ok(bookingService.getAllBookings());
+    public ResponseEntity<APIResponse<List<BookingResponseDto>>> getAllBookings() {
+        return ResponseEntity.ok(APIResponse.success("All Bookings", bookingService.getAllBookings()));
     }
-
-
 }

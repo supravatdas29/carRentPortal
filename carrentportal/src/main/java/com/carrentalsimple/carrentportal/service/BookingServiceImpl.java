@@ -86,6 +86,7 @@ public class BookingServiceImpl implements BookingService{
     }
 
     @Override
+    @Transactional
     public List<BookingResponseDto> getAllBookings() {
         return bookingRepository.findAll().stream()
                 .map(BookingMapper::toResponse)

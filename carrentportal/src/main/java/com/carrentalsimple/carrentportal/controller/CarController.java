@@ -35,21 +35,23 @@ public class CarController {
     // ✅ Only Admin can delete
     @DeleteMapping("deleteById/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> deleteCar( @PathVariable Long id) {
+    public ResponseEntity<APIResponse<Void>> deleteCar( @PathVariable Long id) {
         carService.removeCar(id);
         return ResponseEntity.noContent().build();
     }
 
     // ✅ Anyone can view all cars
     @GetMapping
-    public ResponseEntity<List<CarResponseDto>> getAllCars() {
-        return ResponseEntity.ok(carService.getAllCars());
+    public ResponseEntity<APIResponse<List<CarResponseDto>>> getAllCars() {
+        List<CarResponseDto> allCars = carService.getAllCars();
+        return ResponseEntity.ok(APIResponse.success("All car Details",allCars));
     }
 
     // ✅ Anyone can view car details
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/getById/{Id}")
-    public ResponseEntity<CarResponseDto> getCarById(@PathVariable Long carId) {
-        return ResponseEntity.ok(carService.getCarById(carId));
+    public ResponseEntity<APIResponse<CarResponseDto>> getCarById(@PathVariable Long carId) {
+        CarResponseDto carById = carService.getCarById(carId);
+        return ResponseEntity.ok(APIResponse.success("Car By Id",carById));
     }
 }
