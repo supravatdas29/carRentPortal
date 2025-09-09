@@ -4,6 +4,7 @@ import com.carrentalsimple.carrentportal.dto.SellerRequestDto;
 import com.carrentalsimple.carrentportal.dto.SellerResponseDto;
 import com.carrentalsimple.carrentportal.payload.APIResponse;
 import com.carrentalsimple.carrentportal.service.SellerRequestService;
+import com.carrentalsimple.carrentportal.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,6 +20,7 @@ import java.util.List;
 public class SellerRequestController {
 
     private final SellerRequestService sellerRequestService;
+    private final UserService userService;
 
     // Seller creates a request (sellerId comes from JWT)
     @PostMapping
@@ -29,7 +31,9 @@ public class SellerRequestController {
             @RequestBody SellerRequestDto dto) {
 
         // ✅ sellerId from token
-       String email = userDetails.getUsername(); // username = userId in JWT
+//       String email = userDetails.getUsername(); // username = userId in JWT
+        String email = userDetails.getUsername();
+        Long sellerId = userService.getUserIdByEmail(email);
         SellerResponseDto request = sellerRequestService.createRequest(email, dto);
         return ResponseEntity.ok(APIResponse.success("Request Successfully Send ",request));
     }

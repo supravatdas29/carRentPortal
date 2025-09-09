@@ -15,6 +15,7 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PaymentRequest {
+    private Double amount;
     @NotNull(message = "Payment method is required")
     private PaymentMethod method;
 
