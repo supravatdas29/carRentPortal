@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: carrentalportal
+
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/carportal_db?useSSL=false&serverTimezone=UTC}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:root}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: ${DDL_AUTO:update}
+
+    show-sql: ${SHOW_SQL:true}
+    properties:
+      hibernate:
+        format_sql: ${FORMAT_SQL:true}
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:mysupersecretkeyformyproject1234567890}
+    expiration-ms: ${JWT_EXPIRATION:84600000}
+
+
+
+
