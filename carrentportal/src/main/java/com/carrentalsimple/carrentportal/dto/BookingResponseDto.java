@@ -17,6 +17,9 @@ public class BookingResponseDto {
     private Long id;
     private Long userId;
     private Long carId;
+    private String carBrand;
+    private String carModel;
+    private String carRegistration;
     private LocalDate startDate;
     private LocalDate endDate;
     private double totalPrice;

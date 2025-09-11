@@ -32,7 +32,13 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/auth/**"
+                        .requestMatchers(
+                                "/api/v1/auth/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/swagger-resources/**",
+                                "/v3/api-docs/**",   // ✅ Needed for Swagger JSON
+                                "/webjars/**" // ✅ allow OpenAPI spec
                         ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/cars/**").permitAll()
                         .anyRequest().authenticated()
@@ -50,7 +56,6 @@ public class SecurityConfig {
         return provider;
     }
 
-
     @Bean
     public AuthenticationManager authManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
@@ -61,4 +66,3 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 }
-
