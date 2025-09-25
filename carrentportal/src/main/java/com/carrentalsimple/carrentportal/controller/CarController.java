@@ -50,7 +50,7 @@ public class CarController {
     // ✅ Anyone can view car details
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/getById/{Id}")
-    public ResponseEntity<APIResponse<CarResponseDto>> getCarById(@PathVariable Long carId) {
+    public ResponseEntity<APIResponse<CarResponseDto>> getCarById(@PathVariable("Id") Long carId) {
         CarResponseDto carById = carService.getCarById(carId);
         return ResponseEntity.ok(APIResponse.success("Car By Id",carById));
     }

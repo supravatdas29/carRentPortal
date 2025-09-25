@@ -30,6 +30,7 @@ public class Driver {
 
     private String phone;
 
+    @Enumerated(EnumType.STRING)
     private DriverStatus driverStatus;
 
     @OneToOne

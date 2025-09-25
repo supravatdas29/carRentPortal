@@ -7,7 +7,12 @@ import com.carrentalsimple.carrentportal.entity.User;
 import com.carrentalsimple.carrentportal.repository.UserRepository;
 import com.carrentalsimple.carrentportal.security.JwtService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
+import lombok.extern.slf4j.XSlf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class AuthController {
+//    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -30,6 +36,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            log.info("Registering user");
             return ResponseEntity.badRequest().body(new AuthResponse("Email already registered"));
         }
 
@@ -48,13 +55,18 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
-        authenticationManager.authenticate(
+        log.info("User Login");
+
+//        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(request.getEmail(),request.getPassword());
+        authenticationManager.authenticate( //token
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+
         );
 
         String token = jwtService.generateToken(request.getEmail());
         return ResponseEntity.ok(new AuthResponse(token));
     }
+
 
 }
 
