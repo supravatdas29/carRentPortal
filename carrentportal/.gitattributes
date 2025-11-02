@@ -1,2 +1,10 @@
 /mvnw text eol=lf
 *.cmd text eol=crlf
+/target/
+/.idea/
+/.vscode/
+/.mvn/
+/*.iml
+/.settings/
+/.DS_Store
+/.springBeans

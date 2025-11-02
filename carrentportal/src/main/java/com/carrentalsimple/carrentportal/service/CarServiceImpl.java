@@ -5,6 +5,7 @@ import com.carrentalsimple.carrentportal.dto.CarResponseDto;
 import com.carrentalsimple.carrentportal.entity.Car;
 import com.carrentalsimple.carrentportal.entity.User;
 import com.carrentalsimple.carrentportal.entity.enums.Role;
+import com.carrentalsimple.carrentportal.exception.CarNotFound;
 import com.carrentalsimple.carrentportal.exception.ResourceNotFound;
 import com.carrentalsimple.carrentportal.mapper.CarMapper;
 import com.carrentalsimple.carrentportal.repository.CarRepository;
@@ -41,6 +42,28 @@ public class CarServiceImpl implements CarService{
     public CarResponseDto getCarById(Long id) {
         Car byId = carRepository.findById(id).orElseThrow(() -> new ResourceNotFound("No such user found"+id));
         return CarMapper.toResponse(byId);
+    }
+
+    @Override
+    public CarResponseDto updateCarById(Long id, CarRequestDto dto) {
+       Car car =  carRepository.findById(id).orElseThrow(() -> new CarNotFound("No car found With this Id"+id));
+
+       car.setBrand(dto.getBrand());
+       car.setModel(dto.getModel());
+       car.setRegistrationNumber(dto.getRegistrationNumber());
+       car.setFuelType(dto.getFuelType());
+       car.setYear(dto.getYear());
+       car.setPricePerDay(dto.getPricePerDay());
+       car.setWithDriverAvailable(dto.isWithDriverAvailable());
+       car.setSelfDriveAvailable(dto.isSelfDriveAvailable());
+
+       Car updatedCar = carRepository.save(car);
+
+       return CarMapper.toResponse(updatedCar);
+
+
+
+
     }
 
     @Override

@@ -70,6 +70,12 @@ public class GlobalException  {
 
     }
 
+    @ExceptionHandler(CarNotFound.class)
+    public ResponseEntity<ErrorDetails> carNotFoundException(CarNotFound cnf,WebRequest request){
+        ErrorDetails errorDetails = new ErrorDetails(cnf.getMessage(),new Date(), request.getDescription(true));
+        return new ResponseEntity<>(errorDetails,HttpStatus.NOT_FOUND);
+    }
+
 
 
 }

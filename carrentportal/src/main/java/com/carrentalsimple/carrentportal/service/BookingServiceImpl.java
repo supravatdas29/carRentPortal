@@ -12,14 +12,11 @@ import com.carrentalsimple.carrentportal.repository.BookingRepository;
 import com.carrentalsimple.carrentportal.repository.CarRepository;
 import com.carrentalsimple.carrentportal.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.awt.print.Book;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +25,8 @@ public class BookingServiceImpl implements BookingService{
     private final BookingRepository bookingRepository;
     private final CarRepository carRepository;
     private final UserRepository userRepository;
+    private final EmailService emailService;
+    private final PaymentService paymentService;
 
     @Override
     @Transactional
@@ -44,18 +43,18 @@ public class BookingServiceImpl implements BookingService{
 
         }
 
-        long days = ChronoUnit.DAYS.between(request.getStartDate(), request.getEndDate()) + 1;// inclusive
-        if(days <= 0){
+        long days = ChronoUnit.DAYS.between(request.getStartDate(), request.getEndDate()) + 1; // inclusive
+        if (days <= 0) {
             throw new RuntimeException("End date must be after start date");
         }
-        double totalPrice = days * car.getPricePerDay();
 
         Booking booking = BookingMapper.toEntity(customer,car,request);
         car.setAvailable(false);
-        booking.setStatus(BookingStatus.CONFIRMED);
+        booking.setStatus(BookingStatus.PENDING);
         carRepository.save(car);
 
         Booking saved = bookingRepository.save(booking);
+        emailService.sendBookingPendingEmail(saved);
 
         return BookingMapper.toResponse(saved);
 

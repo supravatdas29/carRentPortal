@@ -9,6 +9,7 @@ import com.carrentalsimple.carrentportal.entity.enums.Role;
 import java.util.List;
 
 public interface UserService {
+
     UserResponseDto createUser(UserRequestDto req);
 
 
@@ -23,4 +24,6 @@ public interface UserService {
     Long getUserIdByEmail(String email);
 
     User getUserByEmail(String email);
+
+
 }
