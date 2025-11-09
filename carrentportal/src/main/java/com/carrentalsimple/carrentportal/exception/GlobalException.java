@@ -21,7 +21,7 @@ public class GlobalException  {
         ErrorDetails errorDetails = new ErrorDetails(rnf.getMessage(),
                 new Date(),
                 request.getDescription(true)
-                );
+        );
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
 
     }
@@ -56,8 +56,25 @@ public class GlobalException  {
         return ResponseEntity.internalServerError().body(body);
     }
 
+    @ExceptionHandler(TokenRefreshException.class)
+    public ResponseEntity<Map<String, Object>> handleTokenRefreshException(TokenRefreshException ex) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", HttpStatus.FORBIDDEN.value());
+        body.put("error", "Token Refresh Failed");
+        body.put("message", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(body);
+    }
 
-
+    @ExceptionHandler(PasswordResetException.class)
+    public ResponseEntity<Map<String, Object>> handlePasswordResetException(PasswordResetException ex) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", HttpStatus.BAD_REQUEST.value());
+        body.put("error", "Password Reset Failed");
+        body.put("message", ex.getMessage());
+        return ResponseEntity.badRequest().body(body);
+    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorDetails> allExceptionHandler(Exception e, WebRequest request){
@@ -75,7 +92,5 @@ public class GlobalException  {
         ErrorDetails errorDetails = new ErrorDetails(cnf.getMessage(),new Date(), request.getDescription(true));
         return new ResponseEntity<>(errorDetails,HttpStatus.NOT_FOUND);
     }
-
-
 
 }

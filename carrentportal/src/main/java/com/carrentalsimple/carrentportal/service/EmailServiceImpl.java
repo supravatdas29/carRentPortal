@@ -19,6 +19,9 @@ public class EmailServiceImpl implements EmailService {
     @Value("${notification.mail.from}")
     private String fromAddress;
 
+    @Value("${app.frontend.url:http://localhost:3000}")
+    private String frontendUrl;
+
     @Override
     public void sendWelcomeEmail(User user) {
         SimpleMailMessage message = new SimpleMailMessage();
@@ -54,6 +57,26 @@ public class EmailServiceImpl implements EmailService {
                 "Car: " + booking.getCar().getBrand() + " " + booking.getCar().getModel() + " (" + booking.getCar().getRegistrationNumber() + ")\n" +
                 "Dates: " + booking.getStartDate() + " to " + booking.getEndDate() + "\n" +
                 "Total: " + booking.getTotalPrice() + "\n\nRegards,\nCar Rental Team");
+        safeSend(message);
+    }
+
+    @Override
+    public void sendPasswordResetEmail(User user, String resetToken) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(fromAddress);
+        message.setTo(user.getEmail());
+        message.setSubject("Password Reset Request - Car Rental Portal");
+
+        String resetUrl = frontendUrl + "/reset-password?token=" + resetToken;
+
+        message.setText("Hi " + user.getName() + ",\n\n" +
+                "We received a request to reset your password for Car Rental Portal.\n\n" +
+                "Click the link below to reset your password:\n" +
+                resetUrl + "\n\n" +
+                "This link will expire in 1 hour for security reasons.\n\n" +
+                "If you didn't request a password reset, please ignore this email. Your password will remain unchanged.\n\n" +
+                "Regards,\nCar Rental Team");
+
         safeSend(message);
     }
 

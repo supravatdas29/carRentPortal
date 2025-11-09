@@ -7,8 +7,6 @@ public interface EmailService {
     void sendWelcomeEmail(User user);
     void sendBookingPendingEmail(Booking booking);
     void sendBookingConfirmedEmail(Booking booking);
+
+    void sendPasswordResetEmail(User user, String resetToken);
 }
-
-
-
-
