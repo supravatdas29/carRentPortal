@@ -2,24 +2,51 @@ spring:
   application:
     name: carrentalportal
 
+  # Optional: load .env automatically for local development
+  config:
+    import: optional:file:.env[.properties]
+
   datasource:
-    url: ${DB_URL:jdbc:mysql://localhost:3306/carportal_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true}
+    url: ${DB_URL:jdbc:mysql://localhost:3306/carportal_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true}                 # Remove hardcoded default
     username: ${DB_USERNAME:root}
     password: ${DB_PASSWORD:root}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
-      ddl-auto: ${DDL_AUTO:update}
-    show-sql: ${SHOW_SQL:true}
+      ddl-auto: ${DDL_AUTO:UPDATE}        # e.g., update, validate, none
+    show-sql: ${SHOW_SQL:SHOW}
     properties:
       hibernate:
-        format_sql: ${FORMAT_SQL:true}
+        format_sql: ${FORMAT_SQL}
+
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:rsupravat17@gmail.com}
+    password: ${MAIL_PASSWORD:wliu hcwu ieyt ecyz}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 app:
   jwt:
-    secret: ${JWT_SECRET:mysupersecretkeyformyproject1234567890}
-    expiration-ms: ${JWT_EXPIRATION:84600000}
+    secret: ${JWT_SECRET:mysupersecretkeyformyproject1234567890@#%%}          # Keep secret only in .env / environment
+    expiration-ms: ${JWT_EXPIRATION_MS:84600000}
+    refresh-expiration-ms: ${JWT_REFRESH_EXPIRATION_MS:604800000}    # 7 days
+  
+  password-reset:
+    expiration-ms: ${PASSWORD_RESET_EXPIRATION_MS:3600000}    # 1 hour
+  
+  frontend:
+    url: ${FRONTEND_URL:http://localhost:3000}
+
+notification:
+  mail:
+    from: ${MAIL_FROM:no-reply@carrentalsimple.com}
 
 logging:
   level:

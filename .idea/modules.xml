@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/carrentportal.iml" filepath="$PROJECT_DIR$/.idea/carrentportal.iml" />
+      <module fileurl="file://$PROJECT_DIR$/carrentportal/carrentportal.iml" filepath="$PROJECT_DIR$/carrentportal/carrentportal.iml" />
     </modules>
   </component>
 </project>

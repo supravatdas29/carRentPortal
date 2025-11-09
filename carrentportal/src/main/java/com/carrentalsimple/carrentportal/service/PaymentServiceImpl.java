@@ -22,6 +22,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final BookingRepository bookingRepository;
+    private final EmailService emailService;
 
     @Override
     public PaymentResponse processPayment(Long bookingId, PaymentRequest request, String authenticatedEmail) {
@@ -42,6 +43,12 @@ public class PaymentServiceImpl implements PaymentService {
         payment.setPaidAt(LocalDateTime.now());
 
         Payment saved = paymentRepository.save(payment);
+
+        // mark booking confirmed on payment success
+        booking.setStatus(com.carrentalsimple.carrentportal.entity.enums.BookingStatus.CONFIRMED);
+        bookingRepository.save(booking);
+
+        emailService.sendBookingConfirmedEmail(booking);
         return PaymentMapper.toResponse(saved);
     }
 

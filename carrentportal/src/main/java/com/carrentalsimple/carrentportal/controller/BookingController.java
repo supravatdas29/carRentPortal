@@ -6,6 +6,7 @@ import com.carrentalsimple.carrentportal.payload.APIResponse;
 import com.carrentalsimple.carrentportal.service.BookingService;
 import com.carrentalsimple.carrentportal.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/bookings")
 @RequiredArgsConstructor
@@ -28,6 +30,7 @@ public class BookingController {
     public ResponseEntity<APIResponse<BookingResponseDto>> createBooking(
             @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody BookingRequestDto dto) {
+        log.info("Booking Started");
 
         String email = userDetails.getUsername();
         Long userId = userService.getUserIdByEmail(email);
@@ -41,6 +44,7 @@ public class BookingController {
     @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<APIResponse<List<BookingResponseDto>>> getMyBookings(
             @AuthenticationPrincipal UserDetails userDetails) {
+        log.info("Getting my Bookings");
 
         String email = userDetails.getUsername();
         Long userId = userService.getUserIdByEmail(email);

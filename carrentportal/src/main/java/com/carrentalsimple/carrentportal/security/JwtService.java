@@ -26,6 +26,7 @@ public class JwtService {
 
     }
 
+
     public String generateToken(String name){
         return Jwts.builder()
                 .setSubject(name)
@@ -40,7 +41,11 @@ public class JwtService {
 
     }
     public <T> T extractClaim(String token, Function<Claims, T> resolver) {
-        Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
         return resolver.apply(claims);
     }
 

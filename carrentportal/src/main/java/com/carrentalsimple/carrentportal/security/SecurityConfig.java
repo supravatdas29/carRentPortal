@@ -31,35 +31,42 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
+                .authorizeHttpRequests(auth -> auth //lambda-based DSL Spring Security 5.5+
+                        // Permit Swagger and Auth endpoints
                         .requestMatchers(
                                 "/api/v1/auth/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/swagger-resources/**",
-                                "/v3/api-docs/**",   // ✅ Needed for Swagger JSON
-                                "/webjars/**" // ✅ allow OpenAPI spec
+                                "/v3/api-docs/**",
+                                "/webjars/**"
                         ).permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/cars/**").permitAll()
+                        // Permit GET requests for cars
+                        .requestMatchers(HttpMethod.GET, "/api/v1/cars/**").permitAll()
+                        // All other requests require authentication
                         .anyRequest().authenticated()
                 )
+                // Add JWT filter before UsernamePasswordAuthenticationFilter
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    @Bean
-    public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailsService); // uses CustomUserDetailsService
-        provider.setPasswordEncoder(passwordEncoder());
-        return provider;
-    }
 
     @Bean
     public AuthenticationManager authManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
+
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(userDetailsService);
+        provider.setPasswordEncoder(passwordEncoder());
+        return provider;
+    }
+
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
