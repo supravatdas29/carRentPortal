@@ -3,15 +3,12 @@ package com.carrentalsimple.carrentportal.controller;
 
 import com.carrentalsimple.carrentportal.dto.UserRequestDto;
 import com.carrentalsimple.carrentportal.dto.UserResponseDto;
-import com.carrentalsimple.carrentportal.entity.enums.Role;
 import com.carrentalsimple.carrentportal.payload.APIResponse;
 import com.carrentalsimple.carrentportal.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,16 +20,7 @@ public class UserController {
 
     private final UserService userService;
 
-    // --- CUSTOMER APIs ---
-    @PostMapping("/register")
-    public ResponseEntity<UserResponseDto> createCustomer(@Valid @RequestBody UserRequestDto dto) {
-        return ResponseEntity.ok(userService.createUser(dto));
-    }
-
-
-
-
-    // --- COMMON APIs ---
+    // --- ADMIN APIs ---
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<APIResponse<List<UserResponseDto>>> getAllUsers() {
