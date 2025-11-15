@@ -2,10 +2,14 @@ package com.carrentalsimple.carrentportal.controller;
 
 import com.carrentalsimple.carrentportal.dto.AuthResponse;
 import com.carrentalsimple.carrentportal.dto.ForgotPasswordRequest;
+import com.carrentalsimple.carrentportal.dto.ForgotPasswordResponse;
 import com.carrentalsimple.carrentportal.dto.LoginRequest;
+import com.carrentalsimple.carrentportal.dto.LogoutResponse;
 import com.carrentalsimple.carrentportal.dto.RegisterRequest;
 import com.carrentalsimple.carrentportal.dto.ResetPasswordRequest;
+import com.carrentalsimple.carrentportal.dto.ResetPasswordResponse;
 import com.carrentalsimple.carrentportal.dto.TokenRefreshRequest;
+import com.carrentalsimple.carrentportal.dto.ValidateTokenResponse;
 import com.carrentalsimple.carrentportal.entity.RefreshToken;
 import com.carrentalsimple.carrentportal.entity.User;
 import com.carrentalsimple.carrentportal.exception.PasswordResetException;
@@ -23,9 +27,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -96,55 +97,48 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Map<String, String>> logoutUser(@Valid @RequestBody TokenRefreshRequest logOutRequest) {
+    public ResponseEntity<LogoutResponse> logoutUser(@Valid @RequestBody TokenRefreshRequest logOutRequest) {
         refreshTokenService.deleteByToken(logOutRequest.getRefreshToken());
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "Log out successful!");
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(new LogoutResponse("Log out successful!"));
     }
 
     @PostMapping("/forgot-password")
-    public ResponseEntity<Map<String, String>> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+    public ResponseEntity<ForgotPasswordResponse> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
         log.info("Password reset requested for email: {}", request.getEmail());
 
         try {
             passwordResetService.initiatePasswordReset(request.getEmail());
-            Map<String, String> response = new HashMap<>();
-            response.put("message", "If the email exists in our system, you will receive a password reset link shortly.");
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(ForgotPasswordResponse.success(
+                    "If the email exists in our system, you will receive a password reset link shortly."));
         } catch (PasswordResetException e) {
             log.error("Failed to initiate password reset", e);
-            Map<String, String> response = new HashMap<>();
-            response.put("message", "Failed to send password reset email. Please try again later.");
-            return ResponseEntity.internalServerError().body(response);
+            return ResponseEntity.internalServerError().body(
+                    ForgotPasswordResponse.error("Failed to send password reset email. Please try again later."));
         }
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity<Map<String, String>> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+    public ResponseEntity<ResetPasswordResponse> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
         log.info("Password reset attempted with token");
 
         try {
             passwordResetService.resetPassword(request.getToken(), request.getNewPassword(), request.getConfirmPassword());
-            Map<String, String> response = new HashMap<>();
-            response.put("message", "Password has been reset successfully. You can now login with your new password.");
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok(ResetPasswordResponse.success(
+                    "Password has been reset successfully. You can now login with your new password."));
         } catch (PasswordResetException e) {
             log.error("Password reset failed: {}", e.getMessage());
-            Map<String, String> response = new HashMap<>();
-            response.put("error", e.getMessage());
-            return ResponseEntity.badRequest().body(response);
+            return ResponseEntity.badRequest().body(ResetPasswordResponse.error(e.getMessage()));
         }
     }
 
     @GetMapping("/validate-reset-token")
-    public ResponseEntity<Map<String, Object>> validateResetToken(@RequestParam String token) {
+    public ResponseEntity<ValidateTokenResponse> validateResetToken(@RequestParam String token) {
         boolean isValid = passwordResetService.validatePasswordResetToken(token);
-        Map<String, Object> response = new HashMap<>();
-        response.put("valid", isValid);
-        if (!isValid) {
-            response.put("message", "Invalid or expired password reset token");
+
+        if (isValid) {
+            return ResponseEntity.ok(ValidateTokenResponse.valid());
+        } else {
+            return ResponseEntity.ok(ValidateTokenResponse.invalid());
         }
-        return ResponseEntity.ok(response);
     }
 }
